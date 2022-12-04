@@ -1,0 +1,10 @@
+#! /usr/bin/bash
+
+declare -A cols=( ["people"]="name,birth_year,eye_color,gender,hair_color,height,mass,skin_color,homeworld,films,species,starships,vehicles,created,edited,url" ["films"]="title,episode_id,opening_crawl,director,producer,release_date,species,starships,vehicles,characters,planets,created,edited,url" ["vehicles"]="name,model,vehicle_class,manufacturer,length,cost_in_credits,crew,passengers,max_atmosphering_speed,cargo_capacity,consumables,films,pilots,created,edited,url" ["starships"]="name,model,starship_class,manufacturer,cost_in_credits,length,crew,passengers,max_atmosphering_speed,hyperdrive_rating,MGLT,cargo_capacity,consumables,films,pilots,created,edited,url" ["planets"]="name,diameter,rotation_period,orbital_period,gravity,population,climate,terrain,surface_water,residents,films,created,edited,url" ["species"]="name,classification,designation,average_height,average_lifespan,eye_colors,hair_colors,skin_colors,language,homeworld,people,films,created,edited,url" )
+
+for col in "${!cols[@]}"
+do
+    echo $col
+    echo ${cols[$col]}
+   docker exec -i mongo mongoexport --db=swapi --collection=$col --type=csv --fields=${cols[$col]} > $col.csv
+done
