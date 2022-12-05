@@ -1,4 +1,4 @@
-### Carga de datos
+*** Carga de datos
 
 #+begin_src cypher
 LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/people.csv" AS row
