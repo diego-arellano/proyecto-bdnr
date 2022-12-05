@@ -119,3 +119,22 @@ match (v:Vehicles) set v.films = replace(v.films, '"', '')
 
 match (v:Vehicles) set v.films = split(v.films, ',') 
 
+match (v:Vehicles), (f:Films) 
+where f.url in v.films
+create (v)-[:APPEARS_IN]->(f)
+
+# Planets -> Films
+
+match (p:Planets) set p.films = replace(p.films, '[', '') 
+
+match (p:Planets) set p.films = replace(p.films, ']', '') 
+
+match (p:Planets) set p.films = replace(p.films, '"', '') 
+
+match (p:Planets) set p.films = split(p.films, ',') 
+
+match (p:Planets), (f:Films) 
+where f.url in p.films
+create (p)-[:APPEARS_IN]->(f)
+
+
