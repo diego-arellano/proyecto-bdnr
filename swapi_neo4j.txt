@@ -16,14 +16,33 @@ LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/pro
 CREATE (n:Species) 
 SET n=row
 
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/starships.csv" AS row 
+CREATE (n:Starships) 
+SET n=row
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/vehicles.csv" AS row 
+CREATE (n:Vehicles) 
+SET n=row
+
+
+# Borrar nodos sin nombre ( suponer que eso significa que son nulos )
+
+match (n:Starships) WHERE NOT (EXISTS (n.name)) DETACH DELETE n
+
+match (n:Vehicles) WHERE NOT (EXISTS (n.name)) DETACH DELETE n
+
+match (n:People) WHERE NOT (EXISTS (n.name)) DETACH DELETE n
+
 # Establecer relaciones 
 
 # People -> Planets
+
 MATCH (p:People),(pl: Planets)
 WHERE p.homeworld = pl.url
 CREATE (p)-[:IS_FROM]->(pl)
 
 # People -> Species
+
 match (p:People) set p.species = replace(p.species, '[', '') 
 
 match (p:People) set p.species = replace(p.species, ']', '')
@@ -44,8 +63,37 @@ match (p:People) set p.films = replace(p.films, ']', '')
 
 match (p:People) set p.films = replace(p.films, '"', '') 
 
-match (p:People), (f:Films) where f.url in p.films create (p)-[:APPEARS_IN]->(f)
+match (p:People), (f:Films) 
+where f.url in p.films
+create (p)-[:APPEARS_IN]->(f)
 
+# People -> Starships 
+
+match (p:People) set p.starships = replace(p.starships, '[', '') 
+
+match (p:People) set p.starships = replace(p.starships, ']', '') 
+
+match (p:People) set p.starships = replace(p.starships, '"', '') 
+
+match (p:People) set p.starships = split(p.starships, ',')
+
+match (p:People), (s:Starships) 
+where s.url in p.starships
+create (p)-[:PILOTS]->(s)
+
+# People -> Vehicles
+
+match (p:People) set p.vehicles = replace(p.vehicles, '[', '') 
+
+match (p:People) set p.vehicles = replace(p.vehicles, ']', '') 
+
+match (p:People) set p.vehicles = replace(p.vehicles, '"', '') 
+
+match (p:People) set p.vehicles = split(p.vehicles, ',') 
+
+match (p:People), (v:Vehicles) 
+where v.url in p.vehicles
+create (p)-[:DRIVES]->(v)
 
 
  
