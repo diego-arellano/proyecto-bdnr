@@ -97,6 +97,10 @@ match (p:People) set p.films = replace(p.films, '"', '')
 #+end_src
 
 #+begin_src cypher
+match (p:People) set p.films = split(p.films, ',')
+#+end_src
+
+#+begin_src cypher
 match (p:People), (f:Films) 
 where f.url in p.films
 create (p)-[:APPEARS_IN]->(f)
