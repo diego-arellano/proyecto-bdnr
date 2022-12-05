@@ -2,6 +2,60 @@
 Los datos se sacarán de MongoDB.
 
 #+begin_src sh
-docker exec -i mongo mongoexport --db=swapi --collection=people --jsonArray> people.json
-cat people.json | jq -r '(. | map(leaf_paths) | unique) as $cols | map (. as $row | ($cols | map(. as $col | $row | getpath($col)))) as $rows | ([($cols | map(. | map(tostring) | join(".")))] + $rows) | map(@csv) | .[]' > people.csv
-#+end_src  
+docker exec -i mongo mongoexport --db=swapi --collection=people --jsonArray> people_monet.json
+cat people_monet.json | jq -r '(. | map(leaf_paths) | unique) as $cols | map (. as $row | ($cols | map(. as $col | $row | getpath($col)))) as $rows | ([($cols | map(. | map(tostring) | join(".")))] + $rows) | map(@csv) | .[]' > people_aux.csv
+cat people_aux.csv | sed -e 's/, /-/g' -e 's/none//g' -e 's/n\/a//g' -e 's/unknown//g' -e 's/1,/1/g'>people_monet.csv
+#+end_src
+
+*** Inserción de la base people.csv a MonetDB
+Inserción de datos en el Docker
+#+begin_src sh
+docker cp people_monet.csv monetdb:/var/monetdb5/dbfarm/people.csv
+#+end_src
+Creación de la base en MonetDB
+#+begin_src sh
+monetdb create -p monetdb people
+#acceso a monetdb con constraseña people
+monetdb mclient people
+#+end_src
+
+*** Creación del esquema People y de la tabla
+
+#+begin_src sql
+-- creación de esquema people y usuario people
+CREATE USER "people" WITH PASSWORD 'people' NAME 'People Explorer' SCHEMA "sys";
+CREATE SCHEMA "people" AUTHORIZATION "people";
+ALTER USER "people" SET SCHEMA "people";
+-- creacion de la tabla
+CREATE TABLE people (
+iden varchar(24),
+birth_year varchar(10),
+created timestamp,
+edited timestamp,
+eye_color varchar(20),
+film1 varchar(60),
+film2 varchar(60),
+film3 varchar(60),
+film4 varchar(60),
+film5 varchar(60),
+film6 varchar(60),
+film7 varchar(60),
+gender varchar(17),
+hair_color varchar(20),
+height int,
+homeworld varchar(60),
+mass float,
+name varchar(35),
+skin_color varchar(20),
+species varchar(60),
+starship1 varchar(60),
+starship2 varchar(60),
+starship3 varchar(60),
+starship4 varchar(60),
+starship5 varchar(60),
+url varchar(60),
+vehicle1 varchar(60),
+vehicle2 varchar(60));
+-- comando de inserción
+copy offset 2 into people from '/var/monetdb5/dbfarm/people.csv' on client using delimiters ',',E'\n',E'\"' null as '';
+#+end_src
