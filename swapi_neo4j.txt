@@ -1,0 +1,51 @@
+# Carga de datos
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/people.csv" AS row
+CREATE (n:People)
+SET n = row
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/planets.csv" AS row
+CREATE (n:Planets)
+SET n = row
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/films.csv" AS row 
+CREATE (n:Films) 
+SET n=row
+
+LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/species.csv" AS row 
+CREATE (n:Species) 
+SET n=row
+
+# Establecer relaciones 
+
+# People -> Planets
+MATCH (p:People),(pl: Planets)
+WHERE p.homeworld = pl.url
+CREATE (p)-[:IS_FROM]->(pl)
+
+# People -> Species
+match (p:People) set p.species = replace(p.species, '[', '') 
+
+match (p:People) set p.species = replace(p.species, ']', '')
+
+match (p:People) set p.species = replace(p.species, '"', '') 
+
+MATCH (p:People),(s: Species)
+WHERE p.species = s.name
+CREATE (p)-[:IS]->(s)
+
+# People -> Films
+
+# Limpiar los datos, pasar los datos necesarios a listas
+
+match (p:People) set p.films = replace(p.films, '[', '') 
+
+match (p:People) set p.films = replace(p.films, ']', '') 
+
+match (p:People) set p.films = replace(p.films, '"', '') 
+
+match (p:People), (f:Films) where f.url in p.films create (p)-[:APPEARS_IN]->(f)
+
+
+
+ 
