@@ -10,3 +10,5 @@
 #copy offset 2 into people from '/swapi_csv/people.csv' on client using delimiters ',',E'\n',E'\"' null as ' ';
 
 #Nota: es importante checar la parte de los delimitadores todavía, porque las comas dentro de los arreglos están ocasionando serios problemas para copiar el csv a monet
+
+# Agregué los comandos necesarios para crear la base de datos en neo4j 
