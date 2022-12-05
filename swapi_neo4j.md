@@ -1,140 +1,223 @@
-# Carga de datos
+### Carga de datos
 
+#+begin_src cypher
 LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/people.csv" AS row
 CREATE (n:People)
 SET n = row
+#+end_src
 
+#+begin_src cypher
 LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/planets.csv" AS row
 CREATE (n:Planets)
 SET n = row
+#+end_src
 
+#+begin_src cypher
 LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/films.csv" AS row 
 CREATE (n:Films) 
 SET n=row
+#+end_src
 
+#+begin_src cypher
 LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/species.csv" AS row 
 CREATE (n:Species) 
 SET n=row
+#+end_src
 
+#+begin_src cypher
 LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/starships.csv" AS row 
 CREATE (n:Starships) 
 SET n=row
+#+end_src
 
+#+begin_src cypher
 LOAD CSV WITH HEADERS FROM "https://raw.githubusercontent.com/diego-arellano/proyecto-bdnr/main/vehicles.csv" AS row 
 CREATE (n:Vehicles) 
 SET n=row
+#+end_src
 
+### Borrar nodos sin nombre ( suponer que eso significa que son nulos )
 
-# Borrar nodos sin nombre ( suponer que eso significa que son nulos )
-
+#+begin_src cypher
 match (n:Starships) WHERE NOT (EXISTS (n.name)) DETACH DELETE n
+#+end_src
 
+#+begin_src cypher
 match (n:Vehicles) WHERE NOT (EXISTS (n.name)) DETACH DELETE n
+#+end_src
 
+#+begin_src cypher
 match (n:People) WHERE NOT (EXISTS (n.name)) DETACH DELETE n
+#+end_src
 
 # Establecer relaciones 
 
-# People -> Planets
+### People -> Planets
 
+#+begin_src cypher
 MATCH (p:People),(pl: Planets)
 WHERE p.homeworld = pl.url
 CREATE (p)-[:IS_FROM]->(pl)
+#+end_src
 
-# People -> Species
+### People -> Species
 
+#+begin_src cypher
 match (p:People) set p.species = replace(p.species, '[', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:People) set p.species = replace(p.species, ']', '')
+#+end_src
 
+#+begin_src cypher
 match (p:People) set p.species = replace(p.species, '"', '') 
+#+end_src
 
+#+begin_src cypher
 MATCH (p:People),(s: Species)
 WHERE p.species = s.name
 CREATE (p)-[:IS]->(s)
+#+end_src
 
-# People -> Films
+### People -> Films
 
-# Limpiar los datos, pasar los datos necesarios a listas
+#### Limpiar los datos, pasar los datos necesarios a listas
 
+#+begin_src cypher
 match (p:People) set p.films = replace(p.films, '[', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:People) set p.films = replace(p.films, ']', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:People) set p.films = replace(p.films, '"', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:People), (f:Films) 
 where f.url in p.films
 create (p)-[:APPEARS_IN]->(f)
+#+end_src
 
-# People -> Starships 
+### People -> Starships 
 
+#+begin_src cypher
 match (p:People) set p.starships = replace(p.starships, '[', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:People) set p.starships = replace(p.starships, ']', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:People) set p.starships = replace(p.starships, '"', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:People) set p.starships = split(p.starships, ',')
+#+end_src
 
+#+begin_src cypher
 match (p:People), (s:Starships) 
 where s.url in p.starships
 create (p)-[:PILOTS]->(s)
+#+end_src
 
-# People -> Vehicles
+### People -> Vehicles
 
+#+begin_src cypher
 match (p:People) set p.vehicles = replace(p.vehicles, '[', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:People) set p.vehicles = replace(p.vehicles, ']', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:People) set p.vehicles = replace(p.vehicles, '"', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:People) set p.vehicles = split(p.vehicles, ',') 
+#+end_src
 
+#+begin_src cypher
 match (p:People), (v:Vehicles) 
 where v.url in p.vehicles
 create (p)-[:DRIVES]->(v)
+#+end_src
 
-# Starships -> Films
+### Starships -> Films
 
+#+begin_src cypher
 match (s:Starships) set s.films = replace(s.films, '[', '') 
+#+end_src
 
+#+begin_src cypher
 match (s:Starships) set s.films = replace(s.films, ']', '') 
+#+end_src
 
+#+begin_src cypher
 match (s:Starships) set s.films = replace(s.films, '"', '') 
+#+end_src
 
+#+begin_src cypher
 match (s:Starships) set s.films = split(s.films, ',') 
+#+end_src
 
+#+begin_src cypher
 match (s:Starships), (f:Films) 
 where f.url in s.films
 create (s)-[:APPEARS_IN]->(f)
+#+end_src
 
-# Vehicles -> Films
+### Vehicles -> Films
 
+#+begin_src cypher
 match (v:Vehicles) set v.films = replace(v.films, '[', '') 
+#+end_src
 
+#+begin_src cypher
 match (v:Vehicles) set v.films = replace(v.films, ']', '') 
+#+end_src
 
+#+begin_src cypher
 match (v:Vehicles) set v.films = replace(v.films, '"', '') 
+#+end_src
 
+#+begin_src cypher
 match (v:Vehicles) set v.films = split(v.films, ',') 
+#+end_src
 
+#+begin_src cypher
 match (v:Vehicles), (f:Films) 
 where f.url in v.films
 create (v)-[:APPEARS_IN]->(f)
+#+end_src
 
-# Planets -> Films
+### Planets -> Films
 
+#+begin_src cypher
 match (p:Planets) set p.films = replace(p.films, '[', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:Planets) set p.films = replace(p.films, ']', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:Planets) set p.films = replace(p.films, '"', '') 
+#+end_src
 
+#+begin_src cypher
 match (p:Planets) set p.films = split(p.films, ',') 
+#+end_src
 
+#+begin_src cypher
 match (p:Planets), (f:Films) 
 where f.url in p.films
 create (p)-[:APPEARS_IN]->(f)
-
-
+#+end_src
