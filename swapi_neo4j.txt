@@ -95,5 +95,27 @@ match (p:People), (v:Vehicles)
 where v.url in p.vehicles
 create (p)-[:DRIVES]->(v)
 
+# Starships -> Films
 
- 
+match (s:Starships) set s.films = replace(s.films, '[', '') 
+
+match (s:Starships) set s.films = replace(s.films, ']', '') 
+
+match (s:Starships) set s.films = replace(s.films, '"', '') 
+
+match (s:Starships) set s.films = split(s.films, ',') 
+
+match (s:Starships), (f:Films) 
+where f.url in s.films
+create (s)-[:APPEARS_IN]->(f)
+
+# Vehicles -> Films
+
+match (v:Vehicles) set v.films = replace(v.films, '[', '') 
+
+match (v:Vehicles) set v.films = replace(v.films, ']', '') 
+
+match (v:Vehicles) set v.films = replace(v.films, '"', '') 
+
+match (v:Vehicles) set v.films = split(v.films, ',') 
+
