@@ -1,0 +1,7 @@
+*** Carga de datos
+Los datos se sacarán de MongoDB.
+
+#+begin_src sh
+docker exec -i mongo mongoexport --db=swapi --collection=people --jsonArray> people.json
+cat people.json | jq -r '(. | map(leaf_paths) | unique) as $cols | map (. as $row | ($cols | map(. as $col | $row | getpath($col)))) as $rows | ([($cols | map(. | map(tostring) | join(".")))] + $rows) | map(@csv) | .[]' > people.csv
+#+end_src  
