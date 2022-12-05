@@ -15,8 +15,8 @@ docker cp people_monet.csv monetdb:/var/monetdb5/dbfarm/people.csv
 Creación de la base en MonetDB
 #+begin_src sh
 monetdb create -p monetdb people
-#acceso a monetdb con constraseña people
-monetdb mclient people
+#acceso a monetdb con contraseña monetdb
+mclient -u monetdb -d people
 #+end_src
 
 *** Creación del esquema People y de la tabla
