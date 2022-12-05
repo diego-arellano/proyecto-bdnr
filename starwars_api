@@ -15,7 +15,7 @@ for table in list:
     request = requests.get(url)
     response = request.json()
     limite = response["count"]
-    print(limite)
+    #print(limite)
     res = []
     
     while j <= limite:
@@ -24,10 +24,10 @@ for table in list:
         if req.status_code != 404:
             resp = req.json()
             res.append(resp)
-            print(j)
+            #print(j)
             j+=1
         i+=1
-    print("fin de tabla"+table)
+    print("fin de la tabla "+table)
     collection.insert_many(res)
-
+print("fin de la inserción")
     
