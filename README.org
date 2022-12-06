@@ -90,7 +90,60 @@ for table in list:
 ** Monetdb
 
 *** Queries Monetdb
+*** Carga de datos
+Los datos se sacarán de MongoDB.
 
+Correr en Mongo para sacar el subset de datos que nos interesan
+#+begin_src js
+db.people.aggregate([{$unwind:{path:"$films",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$species",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$vehicles",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$starships",preserveNullAndEmptyArrays: true}},{$project:{_id:0}},{$out:"people_monet"}])
+#+end_src
+
+Ahora sacamos limpiamos un poco los datos de la base para meterlos a MonetDB
+#+begin_src sh
+docker exec -i mongo mongoexport --db=swapi --collection=people_monet --type=csv -f name,birth_year,eye_color,gender,hair_color,height,mass,skin_color,homeworld,films,species,starships,vehicles,created,edited,url > people_aux.csv
+cat people_aux.csv | sed -e 's/, /-/g' -e 's/none//g' -e 's/n\/a//g' -e 's/unknown//g' >people_monet.csv
+#+end_src
+
+*** Inserción de la base people.csv a MonetDB
+Inserción de datos en el Docker
+#+begin_src sh
+docker cp people_monet.csv monetdb:/var/monetdb5/dbfarm/people.csv
+#+end_src
+Creación de la base en MonetDB
+#+begin_src sh
+monetdb create -p monetdb people
+#acceso a monetdb con contraseña monetdb
+mclient -u monetdb -d people
+#+end_src
+
+*** Creación del esquema People y de la tabla
+
+#+begin_src sql
+-- creación de esquema people y usuario people
+CREATE USER "people" WITH PASSWORD 'people' NAME 'People Explorer' SCHEMA "sys";
+CREATE SCHEMA "people" AUTHORIZATION "people";
+ALTER USER "people" SET SCHEMA "people";
+-- creacion de la tabla
+CREATE TABLE people (
+name varchar(35),
+birth_year varchar(10),
+eye_color varchar(20),
+gender varchar(17),
+hair_color varchar(20),
+height int,
+mass float,
+skin_color varchar(20),
+homeworld varchar(60),
+films varchar(60),
+species varchar(60),
+starships varchar(60),
+vehicles varchar(60),
+created timestamp,
+edited timestamp,
+url varchar(60));
+-- comando de inserción
+copy offset 2 into people from '/var/monetdb5/dbfarm/people.csv' on client using delimiters ',',E'\n',E'\"' null as '';
+#+end_src
 
 ** Neo4j
 
