@@ -1,9 +1,13 @@
 *** Carga de datos
 Los datos se sacarán de MongoDB.
 
+Correr en Mongo para sacar el subset de datos que nos interesan
+#+begin_src js
+db.people.aggregate([{$unwind:{path:"$films",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$species",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$vehicles",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$starships",preserveNullAndEmptyArrays: true}},{$project:{_id:0}},{$out:"people_monet"}])
+#-end_src
+
 #+begin_src sh
-docker exec -i mongo mongoexport --db=swapi --collection=people --jsonArray|sed '/"_id":/s/"_id":[^,]*,//'> people_monet.json
-cat people_monet.json | jq -r '(. | map(leaf_paths) | unique) as $cols | map (. as $row | ($cols | map(. as $col | $row | getpath($col)))) as $rows | ([($cols | map(. | map(tostring) | join(".")))] + $rows) | map(@csv) | .[]' > people_aux.csv
+docker exec -i mongo mongoexport --db=swapi --collection=people_monet --type=csv -f name,birth_year,eye_color,gender,hair_color,height,mass,skin_color,homeworld,films,species,starships,vehicles,created,edited,url > people_aux.csv
 cat people_aux.csv | sed -e 's/, /-/g' -e 's/none//g' -e 's/n\/a//g' -e 's/unknown//g' -e 's/1,/1/g'>people_monet.csv
 #+end_src
 
@@ -32,13 +36,7 @@ birth_year varchar(10),
 created timestamp,
 edited timestamp,
 eye_color varchar(20),
-film1 varchar(60),
-film2 varchar(60),
-film3 varchar(60),
-film4 varchar(60),
-film5 varchar(60),
-film6 varchar(60),
-film7 varchar(60),
+films varchar(60),
 gender varchar(17),
 hair_color varchar(20),
 height int,
@@ -47,14 +45,9 @@ mass float,
 name varchar(35),
 skin_color varchar(20),
 species varchar(60),
-starship1 varchar(60),
-starship2 varchar(60),
-starship3 varchar(60),
-starship4 varchar(60),
-starship5 varchar(60),
+starships varchar(60),
 url varchar(60),
-vehicle1 varchar(60),
-vehicle2 varchar(60));
+vehicles varchar(60));
 -- comando de inserción
 copy offset 2 into people from '/var/monetdb5/dbfarm/people.csv' on client using delimiters ',',E'\n',E'\"' null as '';
 #+end_src
