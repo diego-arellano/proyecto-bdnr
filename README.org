@@ -137,6 +137,14 @@ copy offset 2 into people from '/var/monetdb5/dbfarm/people.csv' on client using
 #+end_src
 
 *** Queries Monetdb
+- Primer Query:
+       #+begin_src sql
+       select p.name, count(distinct p.films) as cont from people p  group by p.name order by cont desc limit 10;
+       #+end_src
+- Segundo Query:
+       #+begin_src sql
+       select p.skin_color as skin_color, min(distinct p.mass) as min_mass, avg(distinct p.mass) as avg_mass, max(distinct p.mass) as max_mass, sys.var_pop(distinct p.mass) as variance_mass, min(distinct p.height) as min_height, avg(distinct p.height) as avg_height, max(distinct p.height) as max_height,sys.var_pop(distinct p.height) as variance_height, count(distinct p.species) as num_species from people p group by skin_color order by num_species desc;
+       #+end_src
 
 
 ** Neo4j
