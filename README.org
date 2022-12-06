@@ -175,3 +175,8 @@ Para la importación de los datos dentro de Neo se utilizó el raw_path de cada 
 
 *** Queries Neo:
 
+#+begin_src cypher
+match (p:People)-[r]->(s:Species) 
+return s.name as especie, count(p.species) as conteo_especies 
+order by conteo_especies desc
+#+end_src
