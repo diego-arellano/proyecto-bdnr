@@ -49,7 +49,7 @@ CREATE (p)-[:IS_FROM]->(pl)
 *** People -> Species
 
 #+begin_src cypher
-match (p:People) set p.species = replace(p.species, '[', ''), p.films = replace(p.species, ']', ''),
+match (p:People) set p.species = replace(p.species, '[', ''), p.species = replace(p.species, ']', ''),
 p.species = replace(p.species, '"', '')
 #+end_src
 
