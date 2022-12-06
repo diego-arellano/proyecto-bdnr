@@ -13,7 +13,7 @@
 
 # Agregué los comandos necesarios para crear la base de datos en neo4j 
 
-'''sh
+
 
        docker stop mongo
        docker rm mongo
@@ -29,11 +29,11 @@
               --name mongo \
               -d mongo
 
-'''
+
 
 Dentro de Python ejecutar las siguientes sentencias
 
-'''Python
+
 
        import requests
        from pymongo import MongoClient
@@ -64,5 +64,5 @@ Dentro de Python ejecutar las siguientes sentencias
                i+=1
            print("fin de tabla"+table)
            collection.insert_many(res)
-'''
+
 
