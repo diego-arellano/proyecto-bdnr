@@ -69,7 +69,10 @@ for table in list:
        #+end_src
        - Segundo query:
        #+begin_src js
-              
+       db.people.aggregate([ 
+       {$project: {"_id":0, "name":1, "homeworld":1}}, 
+       {$lookup: {from: "planets", localField: "homeworld", foreignField: "url", as: "planet"}},
+       {$project: {"name":1, "planet.name": 1}}])
        #+end_src
        - Tercer query:
        #+begin_src js
