@@ -36,20 +36,6 @@ CREATE (n:Vehicles)
 SET n=row
 #+end_src
 
-*** Borrar nodos sin nombre ( suponer que eso significa que son nulos )
-
-#+begin_src cypher
-match (n:Starships) WHERE NOT (EXISTS (n.name)) DETACH DELETE n
-#+end_src
-
-#+begin_src cypher
-match (n:Vehicles) WHERE NOT (EXISTS (n.name)) DETACH DELETE n
-#+end_src
-
-#+begin_src cypher
-match (n:People) WHERE NOT (EXISTS (n.name)) DETACH DELETE n
-#+end_src
-
 *** Establecer relaciones 
 
 *** People -> Planets
