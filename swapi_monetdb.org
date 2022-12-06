@@ -4,7 +4,7 @@ Los datos se sacarán de MongoDB.
 Correr en Mongo para sacar el subset de datos que nos interesan
 #+begin_src js
 db.people.aggregate([{$unwind:{path:"$films",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$species",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$vehicles",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$starships",preserveNullAndEmptyArrays: true}},{$project:{_id:0}},{$out:"people_monet"}])
-#-end_src
+#+end_src
 
 #+begin_src sh
 docker exec -i mongo mongoexport --db=swapi --collection=people_monet --type=csv -f name,birth_year,eye_color,gender,hair_color,height,mass,skin_color,homeworld,films,species,starships,vehicles,created,edited,url > people_aux.csv
