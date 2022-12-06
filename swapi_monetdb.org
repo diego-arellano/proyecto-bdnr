@@ -2,7 +2,7 @@
 Los datos se sacarán de MongoDB.
 
 #+begin_src sh
-docker exec -i mongo mongoexport --db=swapi --collection=people --jsonArray> people_monet.json
+docker exec -i mongo mongoexport --db=swapi --collection=people --jsonArray|sed '/"_id":/s/"_id":[^,]*,//'> people_monet.json
 cat people_monet.json | jq -r '(. | map(leaf_paths) | unique) as $cols | map (. as $row | ($cols | map(. as $col | $row | getpath($col)))) as $rows | ([($cols | map(. | map(tostring) | join(".")))] + $rows) | map(@csv) | .[]' > people_aux.csv
 cat people_aux.csv | sed -e 's/, /-/g' -e 's/none//g' -e 's/n\/a//g' -e 's/unknown//g' -e 's/1,/1/g'>people_monet.csv
 #+end_src
@@ -28,7 +28,6 @@ CREATE SCHEMA "people" AUTHORIZATION "people";
 ALTER USER "people" SET SCHEMA "people";
 -- creacion de la tabla
 CREATE TABLE people (
-iden varchar(24),
 birth_year varchar(10),
 created timestamp,
 edited timestamp,
