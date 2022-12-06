@@ -174,7 +174,7 @@ Para la importación de los datos dentro de Neo se utilizó el raw_path de cada 
 
 
 *** Queries Neo:
-- Primer Query, obtenemos un conteo de las especies de todos nuestros personajes
+- Primer Query: Obtenemos un conteo de las especies de todos nuestros personajes
 
 #+begin_src cypher
 match (p:People)-[r]->(s:Species) 
@@ -182,7 +182,7 @@ return s.name as especie, count(p.species) as conteo_especies
 order by conteo_especies desc
 #+end_src
 
-- Segundo Query, obtenemos todas las películas en las que aparecen cada uno de los personajes
+- Segundo Query: Obtenemos todas las películas en las que aparecen cada uno de los personajes
 
 #+begin_src cypher
 match (p:People)-[r]->(f:Films)  
