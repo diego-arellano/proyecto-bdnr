@@ -26,9 +26,9 @@ docker run -p 27017:27017 \
 
 
 Dentro de Python ejecutar las siguientes sentencias
-       - A través de las cuales conectamos mongo con python y creamos las distintas colecciones existentes en mongo, dado que no existe un extract all o algo parecido *nota: la documentación dice que sí se puede a través de https://swapi.py4e.com/api/table/*, pero ¡esto es falso! Solo regresa los primeros 10, por lo tanto tuvimos que extraer todo lo posible iterando
+       - A través de las cuales conectamos mongo con python y creamos las distintas colecciones existentes en mongo, dado que no existe un extract all o algo parecido * /Nota/: la documentación dice que sí se puede a través de https://swapi.py4e.com/api/table/*, pero ¡esto es falso! Solo regresa los primeros 10, por lo tanto tuvimos que extraer todo lo posible iterando
        - Nueva sorpresa: la API no está completa, hay indices de URL que no contienen información y devuelven un error 404 :'( 
-       Solución: la iteración se realiza por un while hasta el punto en que se han extraido todos los datos que la api reporta que existen, y el contador no aumenta salvo en el caso de que la respuesta no sea 404. Se apendea en una lista y se utiliza la función insert_many
+       /Solución/: la iteración se realiza por un while hasta el punto en que se han extraido todos los datos que la api reporta que existen, y el contador no aumenta salvo en el caso de que la respuesta no sea 404. Se apendea en una lista y se utiliza la función insert_many
        
 #+begin_src py
 import requests
@@ -76,7 +76,7 @@ for table in list:
               
        #+end_src
           
-*Nota: fue importante checar la parte de los delimitadores todavía, porque las comas dentro de los arreglos están ocasionando serios problemas para copiar el csv a monet o a neo
+* /Nota/: fue importante checar la parte de los delimitadores todavía, porque las comas dentro de los arreglos están ocasionando serios problemas para copiar el csv a monet o a neo
 ** Monetdb
 *** Carga de datos
 Los datos se sacarán de MongoDB.
@@ -88,6 +88,7 @@ db.people.aggregate([{$unwind:{path:"$films",preserveNullAndEmptyArrays: true}},
 #+end_src
 
 Ahora sacamos limpiamos un poco los datos de la base para meterlos a MonetDB
+
 #+begin_src sh
 docker exec -i mongo mongoexport --db=swapi --collection=people_monet --type=csv -f name,birth_year,eye_color,gender,hair_color,height,mass,skin_color,homeworld,films,species,starships,vehicles,created,edited,url > people_aux.csv
 cat people_aux.csv | sed -e 's/, /-/g' -e 's/none//g' -e 's/n\/a//g' -e 's/unknown//g' >people_monet.csv
@@ -95,12 +96,15 @@ cat people_aux.csv | sed -e 's/, /-/g' -e 's/none//g' -e 's/n\/a//g' -e 's/unkno
 
 *** Inserción de la base people.csv a MonetDB
 Inserción de datos en el Docker
+
 #+begin_src sh
 docker cp people_monet.csv monetdb:/var/monetdb5/dbfarm/people.csv
 #+end_src
-Nota:[[https://ugeek.github.io/blog/post/2020-05-27-copiar-directorios-o-archivos-de-un-docker-a-local-o-viceversa.html]][Si se requiere ayuda para el copy a docker]
+
+/Nota/:[[https://ugeek.github.io/blog/post/2020-05-27-copiar-directorios-o-archivos-de-un-docker-a-local-o-viceversa.html]][Si se requiere ayuda para el copy a docker]
 
 Creación de la base en MonetDB
+
 #+begin_src sh
 monetdb create -p monetdb people
 #acceso a monetdb con contraseña monetdb
@@ -143,6 +147,7 @@ copy offset 2 into people from '/var/monetdb5/dbfarm/people.csv' on client using
 #+begin_src sj
 select p.name, count(distinct p.films) as cont from people p  group by p.name order by cont desc limit 10;
 #+end_src
+
 - Segundo Query, hacemos una consulta que nos indica las estadísticas de masa, altura para cada color de piel. Además, no da el número de especies que tienen ese color de piel.
 
 #+begin_src sql
@@ -187,4 +192,10 @@ order by conteo_especies desc
 #+begin_src cypher
 match (p:People)-[r]->(f:Films)  
 return p.name, collect(distinct f.title)
+#+end_src
+
+- Tercer Query:
+
+#+begin_src cypher
+
 #+end_src
