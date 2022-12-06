@@ -88,12 +88,11 @@ for table in list:
        #+end_src
               
 ** Monetdb
-
-*** Queries Monetdb
 *** Carga de datos
 Los datos se sacarán de MongoDB.
 
 Correr en Mongo para sacar el subset de datos que nos interesan
+
 #+begin_src js
 db.people.aggregate([{$unwind:{path:"$films",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$species",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$vehicles",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$starships",preserveNullAndEmptyArrays: true}},{$project:{_id:0}},{$out:"people_monet"}])
 #+end_src
@@ -145,7 +144,29 @@ url varchar(60));
 copy offset 2 into people from '/var/monetdb5/dbfarm/people.csv' on client using delimiters ',',E'\n',E'\"' null as '';
 #+end_src
 
+*** Queries Monetdb
+
+
 ** Neo4j
+
+Se utilizó una instancia de Neo en AWS de la forma en que se creó en clase.
+
+Para la parte de Neo4j, se exportaron los datos de mongo, completos a csv's para poder importarlo a neo de una forma más sencilla a través de csv's dentro de este mismo github:
+
+#+begin_src sh
+declare -A cols=( ["people"]="name,birth_year,eye_color,gender,hair_color,height,mass,skin_color,homeworld,films,species,starships,vehicles,created,edited,url" ["films"]="title,episode_id,opening_crawl,director,producer,release_date,species,starships,vehicles,characters,planets,created,edited,url" ["vehicles"]="name,model,vehicle_class,manufacturer,length,cost_in_credits,crew,passengers,max_atmosphering_speed,cargo_capacity,consumables,films,pilots,created,edited,url" ["starships"]="name,model,starship_class,manufacturer,cost_in_credits,length,crew,passengers,max_atmosphering_speed,hyperdrive_rating,MGLT,cargo_capacity,consumables,films,pilots,created,edited,url" ["planets"]="name,diameter,rotation_period,orbital_period,gravity,population,climate,terrain,surface_water,residents,films,created,edited,url" ["species"]="name,classification,designation,average_height,average_lifespan,eye_colors,hair_colors,skin_colors,language,homeworld,people,films,created,edited,url" )
+mkdir swapi_csvs
+
+for col in "${!cols[@]}"
+do
+    echo $col
+    echo ${cols[$col]}
+   docker exec -i mongo mongoexport --db=swapi --collection=$col --type=csv --fields=${cols[$col]} > /swapi_csvs/$col.csv
+done
+#+end_src
+
+Para la importación de los datos dentro de Neo se utilizó el raw_path de cada uno de los csv's durante el load. 
+
 
 *** Queries Neo:
 
