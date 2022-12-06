@@ -33,22 +33,22 @@ CREATE SCHEMA "people" AUTHORIZATION "people";
 ALTER USER "people" SET SCHEMA "people";
 -- creacion de la tabla
 CREATE TABLE people (
+name varchar(35),
 birth_year varchar(10),
-created timestamp,
-edited timestamp,
 eye_color varchar(20),
-films varchar(60),
 gender varchar(17),
 hair_color varchar(20),
 height int,
-homeworld varchar(60),
 mass float,
-name varchar(35),
 skin_color varchar(20),
+homeworld varchar(60),
+films varchar(60),
 species varchar(60),
 starships varchar(60),
-url varchar(60),
 vehicles varchar(60));
+created timestamp,
+edited timestamp,
+url varchar(60),
 -- comando de inserción
 copy offset 2 into people from '/var/monetdb5/dbfarm/people.csv' on client using delimiters ',',E'\n',E'\"' null as '';
 #+end_src
