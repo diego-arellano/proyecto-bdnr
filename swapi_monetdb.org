@@ -6,6 +6,7 @@ Correr en Mongo para sacar el subset de datos que nos interesan
 db.people.aggregate([{$unwind:{path:"$films",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$species",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$vehicles",preserveNullAndEmptyArrays: true}},{$unwind:{path:"$starships",preserveNullAndEmptyArrays: true}},{$project:{_id:0}},{$out:"people_monet"}])
 #+end_src
 
+Ahora sacamos limpiamos un poco los datos de la base para meterlos a MonetDB
 #+begin_src sh
 docker exec -i mongo mongoexport --db=swapi --collection=people_monet --type=csv -f name,birth_year,eye_color,gender,hair_color,height,mass,skin_color,homeworld,films,species,starships,vehicles,created,edited,url > people_aux.csv
 cat people_aux.csv | sed -e 's/, /-/g' -e 's/none//g' -e 's/n\/a//g' -e 's/unknown//g' -e 's/1,/1/g'>people_monet.csv
