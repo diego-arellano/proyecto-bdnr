@@ -55,7 +55,7 @@ p.species = replace(p.species, '"', '')
 
 #+begin_src cypher
 MATCH (p:People),(s: Species)
-WHERE p.species = s.name
+WHERE p.species = s.url
 CREATE (p)-[:IS]->(s)
 #+end_src
 
