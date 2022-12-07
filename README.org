@@ -75,14 +75,14 @@ for table in list:
        {$project: {"name":1, "planet.name": 1}}
        ])
        #+end_src
-       - Tercer query:
+       - Tercer query: Buscamos los personajes con las starships mas caras (originalmente contenía un limit(5), lamentablemente hay muchos costos en unknown
        #+begin_src js
        db.people.aggregate([
        { $lookup: { from: "starships", localField: "url", foreignField: "pilots", as: "pilot_ship" }},
        { $project: {"name":1, "pilot_ship.name":1, "pilot_ship.cost_in_credits":1}},
        { $unwind: "$pilot_ship"}, 
        { $group: {_id:"$name", max_costo: {$max: "$pilot_ship.cost_in_credits"}}}
-       ]).sort({"max_costo":1})
+       ]).sort({"max_costo":-1})
        #+end_src
           
 * /Nota/: fue importante checar la parte de los delimitadores todavía, porque las comas dentro de los arreglos están ocasionando serios problemas para copiar el csv a monet o a neo
