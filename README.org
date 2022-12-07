@@ -1,7 +1,7 @@
 * PROYECTO-BDNR
 ** Por:
        - Victor Hugo Castillejos Corzo 182344
-       - Diego Arellano Zmudio 
+       - Diego Arellano Zamudio 198002
        - Guillermo Arredondo Renero 197256
 
 *NOTA IMPORTANTE:* Los archivos contenidos dentro del contenedor del git son los scripts que utilizamos a lo largo del desarrollo del proyecto; sin embargo, el proyecto en un /over-all/ se puede replicar a través de lo contenido en este README.org 
