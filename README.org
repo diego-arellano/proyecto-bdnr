@@ -1,6 +1,6 @@
 * PROYECTO-BDNR
 
-* NOTA IMPORTANTE: Los archivos contenidos dentro del contenedor del git son los scripts que utilizamos a lo largo del desarrollo del proyecto; sin embargo, el proyecto en un /over-all/ se puede replicar a través de lo contenido en este README.org *
+* NOTA IMPORTANTE:* Los archivos contenidos dentro del contenedor del git son los scripts que utilizamos a lo largo del desarrollo del proyecto; sin embargo, el proyecto en un /over-all/ se puede replicar a través de lo contenido en este README.org 
 
 Para este proyecto se utilizó la API de Star Wars gratuita llamada SWAPI, en la cual se almacena la información de personajes, planetas, naves, vehiculos, peliculas, especies de las primeras 7 películas, sí... involucra también a /The Force Awakens/. Nuestra intención fue utilizar esto debido a su facilidad de conexiones entre los personajes con las películas y objetos en los que aparecen o utilizan duranta las películas. 
 
@@ -362,3 +362,6 @@ WITH distinct sp.name as especie, s.starship_class as clase, count(s.starship_cl
 ORDER BY conteo_clases desc 
 RETURN especie, collect(clase)[0] as claseFavorita, max(conteo_clases) as num_rep 
 #+end_src
+
+Por último, no nos queda más que agradecerle por todo, queremos decirle que nos la pasamos increíble en cada clase y lo disfrutamos mucho. 
+Ojalá nos veamos después, pero no en la misma materia :)
