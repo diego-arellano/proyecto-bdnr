@@ -4,7 +4,6 @@ Para este proyecto se utilizó la API de Star Wars gratuita llamada SWAPI, en la
 
 *** [[https://swapi.py4e.com/documentation][Api utilizada]]
 
-Agregué los comandos necesarios para crear la base de datos en neo4j 
 
 ** Mongo 
 
