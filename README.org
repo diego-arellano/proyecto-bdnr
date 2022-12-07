@@ -349,7 +349,7 @@ match (p:People)-[r]->(f:Films)
 return p.name, collect(distinct f.title)
 #+end_src
 
-- Tercer Query:
+- Tercer Query: Obtener la clase de starship más popular por cada especie
 
 #+begin_src cypher
 match (s:Starships)<-[p:PILOTS]-(p1:People)-[i:IS]->(sp:Species) 
