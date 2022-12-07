@@ -352,5 +352,5 @@ return p.name, collect(distinct f.title)
 - Tercer Query:
 
 #+begin_src cypher
-
+match (s:Starships)<-[p:PILOTS]-(p1:People)-[i:IS]->(sp:Species) WITH distinct sp.name as especie, s.starship_class as clase, count(s.starship_class) as conteo_clases order by conteo_clases desc RETURN especie, collect(clase)[0] as claseFavorita, max(conteo_clases) as num_rep 
 #+end_src
