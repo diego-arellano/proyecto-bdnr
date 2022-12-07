@@ -110,7 +110,7 @@ Inserción de datos en el Docker
 docker cp people_monet.csv monetdb:/var/monetdb5/dbfarm/people.csv
 #+end_src
 
-/Nota/:[[https://ugeek.github.io/blog/post/2020-05-27-copiar-directorios-o-archivos-de-un-docker-a-local-o-viceversa.html]][Si se requiere ayuda para el copy a docker]
+/Nota/: [[https://ugeek.github.io/blog/post/2020-05-27-copiar-directorios-o-archivos-de-un-docker-a-local-o-viceversa.html]][Si se requiere ayuda para el copy a docker]
 
 Creación de la base en MonetDB
 
@@ -157,13 +157,20 @@ copy offset 2 into people from '/var/monetdb5/dbfarm/people.csv' on client using
 select p.name, count(distinct p.films) as cont from people p  group by p.name order by cont desc limit 10;
 #+end_src
 
-- Segundo Query, hacemos una consulta que nos indica las estadísticas de masa, altura para cada color de piel. Además, no da el número de especies que tienen ese color de piel.
+- Segundo Query, hacemos una consulta que nos indica las estadísticas de masa, altura para cada color de piel. Además, nos da el número de especies que tienen ese color de piel.
 
 #+begin_src sql
 select p.skin_color as skin_color, 
 min(distinct p.mass) as min_mass, avg(distinct p.mass) as avg_mass, max(distinct p.mass) as max_mass, sys.var_pop(distinct p.mass) as variance_mass,        
 min(distinct p.height) as min_height, avg(distinct p.height) as avg_height, max(distinct p.height) as max_height,sys.var_pop(distinct p.height) as variance_height,
 count(distinct p.species) as num_species from people p where p.species is not NULL group by skin_color order by num_species desc;
+#+end_src
+
+- Tercer Query: buscamos la persona con más años de vida que participaron en la película /Return of the Jedi/ pensando en encontrar quienes lucharon con mayor edad
+/Nota/: Se considera que la batalla de Endor (última escena de esta película) ocurre 4 años después de la Batalla de Yavin (por eso se suman 4 años al birth_date que está calculado en años antes de la Batalla de Yavin) [[https://starwars.fandom.com/es/wiki/Calendario_Gal%C3%A1ctico_Est%C3%A1ndar]][Para sacar de dudas]
+
+#+begin_src sql
+select name, CAST(age as real)+4 as tot_age from (select name, years_alive as age from (select distinct(name), rtrim(birth_year, 'BBY') as years_alive from people where films='https://swapi.py4e.com/api/films/3/') as sbq1 where sbq1.years_alive<>'null') as sbq2 order by tot_age desc limit 10;
 #+end_src
        
 ** Neo4j
